@@ -109,4 +109,83 @@ def process_file(file_path):
             documents = [chunk]
         )
 
+    #5 update processed files list
 
+    #get the json dictionary of processed files
+    processed_dict = load_processed_files()
+    processed_dict[file_name] = {
+        "last_modified": os.path.getmtime(file_path),
+        "vectors": vector_id,
+        "file_name": file_name
+    }
+    #write the updated dictionary back to the json file
+    save_processed_files(processed_dict)
+
+    print(f"Processed {file_name} successfully")
+
+#Delete vectors for a file
+
+def delete_vectors(file_name):
+    processed_dict = load_processed_files()
+    file_data_dict = processed_dict.get(file_name, {})
+
+    if not file_data_dict:
+        print(f"No vectors found for {file_name}")
+        return False
+
+    #delete the vectors from ChromaDB
+    collection.delete(where = {"file_name": file_name})
+    print(f"Deleted vectors for {file_name} successfully")
+    return True
+
+#Polling
+
+def list_local_files():
+    folder_path = "documents/"
+    files = []
+
+    for file in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, file)
+        if os.path.isfile(file_path) and file.endswith(".txt"):
+            files.append({"path": file_path, "name":file, "last_modified": os.path.getmtime(file_path)})
+    return files
+
+def update_files():
+    print (f"Updating files on {datetime.now().isoformat()}")
+    processed_dict = load_processed_files()
+
+    #handled deleted files
+    current_files = list_local_files()
+    for file_name in list(processed_dict.keys()):
+        file_path = os.path.join("documents/", file_name)
+        #if this path does not exist, delete the vectors from ChromaDB and remove from processed_dict
+        if not os.path.exists(file_path):
+            if delete_vectors(file_name):
+                del processed_dict[file_name]
+                save_processed_files(processed_dict)
+
+    #handle new or modified files
+    for file in current_files:
+        existing = processed_dict.get(file["name"])
+        #if this file is not in the processed_dict or if it has been modified, process the file
+        if (not existing) or (file["last_modified"] > existing["last_modified"]):
+            print(f"Deleting old vectors for {file['name']}")
+            delete_vectors(file["name"])
+            process_file(file["path"])
+
+def wait_or_pull(interval = 3600):
+    start_time = time.time()
+    while time.time() - start_time < interval:
+        user_input = input ("Type pull to run update or q to quit: ").strip().lower()
+        if user_input == "pull":
+            return
+        elif user_input == "q":
+            print("Quitting...")
+            sys.exit(0)
+        time.sleep(1)
+
+
+if __name__ == "__main__":
+    while True:
+        update_files()
+        wait_or_pull()

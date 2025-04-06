@@ -170,7 +170,9 @@ def update_files():
         #if this file is not in the processed_dict or if it has been modified, process the file
         if (not existing) or (file["last_modified"] > existing["last_modified"]):
             print(f"Deleting old vectors for {file['name']}")
+            #delete the vectors from ChromaDB
             delete_vectors(file["name"])
+            #process the file and add to ChromaDB
             process_file(file["path"])
 
 def wait_or_pull(interval = 3600):

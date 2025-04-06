@@ -19,8 +19,8 @@ client = Client(Settings(
     is_persistent=True
 ))
 
-# Create or get collection
+# Create or get collection that uses cosine similiarity for embeddings
 collection = client.get_or_create_collection(
     name=COLLECTION_NAME,
-    metadata={"hnsw:space": "cosine"}  # Use cosine similarity for embeddings
+    metadata={"hnsw:space": "cosine"}
 )

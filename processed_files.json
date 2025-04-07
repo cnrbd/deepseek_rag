@@ -1,0 +1,26 @@
+{
+  "doc1.txt": {
+    "last_modified": 1743981612.7604856,
+    "vectors": [
+      "doc1.txt_0",
+      "doc1.txt_1"
+    ],
+    "file_name": "doc1.txt"
+  },
+  "doc3.txt": {
+    "last_modified": 1743981641.3508105,
+    "vectors": [
+      "doc3.txt_0",
+      "doc3.txt_1"
+    ],
+    "file_name": "doc3.txt"
+  },
+  "doc2.txt": {
+    "last_modified": 1743981626.744543,
+    "vectors": [
+      "doc2.txt_0",
+      "doc2.txt_1"
+    ],
+    "file_name": "doc2.txt"
+  }
+}

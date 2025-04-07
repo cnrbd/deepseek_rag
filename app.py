@@ -2,7 +2,7 @@ import os
 import json
 import time
 import sys
-import datetime
+from datetime import datetime
 from sentence_transformers import SentenceTransformer
 from chromadb import Client
 from chromadb.config import Settings
@@ -77,6 +77,7 @@ def chunk_text(text, chunk_size=500, chunk_overlap=100):
 
 def process_file(file_path):
     file_name = os.path.basename(file_path)
+    print(f"Processing {file_name}")
 
     #1 extract text from file
     content = read_local_files(file_path)
@@ -92,8 +93,8 @@ def process_file(file_path):
         if embedding is None:
             continue
 
-        #add the id of the files' chunk to the list
-        vector_id.append(file_name + "_" + str(i))
+        #create the id for this chunk
+        chunk_id = file_name + "_" + str(i)
 
         metadata = {
             "file_name": file_name,
@@ -103,11 +104,14 @@ def process_file(file_path):
 
         #4 add to ChromaDB
         collection.add(
-            ids=[vector_id],
+            ids=[chunk_id],
             embeddings=[embedding],
             metadatas=[metadata],
-            documents = [chunk]
+            documents=[chunk]
         )
+
+        #add the id to the list for tracking
+        vector_id.append(chunk_id)
 
     #5 update processed files list
 

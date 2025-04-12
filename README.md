@@ -23,3 +23,28 @@ This project implements a **Retrieval-Augmented Generation (RAG)** system using 
 git clone https://github.com/cnrbd/deepseek_rag.git
 cd deepseek_rag
 ```
+
+### 2. Create virtual environment if you wanna
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### 3. Install the requirements
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Start Ollama and pull the model (YOU NEED TO HAVE OLLAMA RUNNING IN THE BACK)
+```bash
+ollama pull deepseek:latest
+```
+
+### Now you can add documents to the documents folder and run app.py
+
+### Finally, run the chatbot
+```bash
+python3 chat.py
+```
+
+
